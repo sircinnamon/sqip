@@ -16,7 +16,7 @@ var captureGroup = regexp.MustCompile(`^(.*?)(<g)(.*?)$`)
 var captureSVGOpen = regexp.MustCompile(`(<svg)(.*?)(>)`)
 
 //Capture the (pre-minified) background rectangle
-var captureBackground = regexp.MustCompile(`<rect.*?fill="([#a-f0-9]*)".*?/>`)
+var captureBackground = regexp.MustCompile(`<svg([^>]*)>\s*<rect.*?fill="([#a-f0-9]*)".*?/>`)
 
 // Blur adds viewbox and preserveAspectRatio attributes as well as
 // a Gaussian Blur filter to the SVG.
@@ -69,5 +69,5 @@ func patchSVGGroup(svg string) (string, error) {
 // This will prevent rounding errors causing the aspect ratio to become incorrect
 // This must be called before minify
 func Refit(in string, width int, height int) (out string) {
-	return captureBackground.ReplaceAllString(in, fmt.Sprintf("<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"${1}\" />", width, height))
+	return captureBackground.ReplaceAllString(in, fmt.Sprintf("<svg${1}><rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"${2}\" />", width, height))
 }
